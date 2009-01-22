@@ -177,7 +177,7 @@ ui_create (void)
 	ui_t *ui = smalloc(sizeof(*ui));
 
 	init_curses();
-	//term_disable_interrupts();
+	term_disable_interrupts();
 
 	top_win_init(ui);
 	tbar_init(ui);
