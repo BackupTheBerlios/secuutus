@@ -1,0 +1,13 @@
+#!/bin/bash
+
+[[ $# < 2 ]] && exit 1
+
+CC="$1"
+CFLAGS="$2"
+SOURCES="$3"
+
+${CC} -MM -MG -MP ${CFLAGS} ${SOURCES} >Makefile.deps
+
+##
+# vim: ts=8 sw=8 noet fdm=marker :
+##

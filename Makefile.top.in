@@ -1,0 +1,93 @@
+# {{{
+#
+# Common Makefile 'top'
+#
+# Copyright (C) 2009 Jon-Francis Bhreitheamhnaigh.
+# All rights reserved.
+#
+# This file is part of Secuutus.
+#
+# License:
+#
+#	Secuutus is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License, version 2,
+#	as published by the Free Software Foundation.
+#
+#	Secuutus is distributed in the hope that it will be useful, but
+#	WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with Secuutus; if not, write to:
+#
+#		Free Software Foundation, Inc.
+#		59 Temple Place
+#		Suite 330
+#		Boston, MA 02111-1307
+#		USA
+#
+# Authors:
+#
+#	Jon-Francis Bhreitheamhnaigh <j.f.vd@adamo-recordings.co.uk>
+#
+# }}}
+
+ifdef V
+	ifeq ("$(V)", "1")
+		VERBOSE = 1
+	endif
+endif
+
+topdir ?= .
+
+SHELL = /bin/bash
+
+AR = ar
+CC = gcc
+INSTALL = install
+MKDEPS = $(topdir)/mkdeps
+RANLIB = ranlib
+
+INSTALL_BIN = $(INSTALL) -m 755
+INSTALL_DIR = $(INSTALL) -d
+INSTALL_DATA = $(INSTALL) -m 644
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+libdir = @libdir@
+includedir = @includedir@
+
+DESTDIR ?=
+
+SUBMAKE = $(MAKE) DESTDIR='$(DESTDIR)'
+
+INC = -I$(topdir) -I$(topdir)/include -I.
+DEFS = @DEFS@
+LIBS = @LIBS@
+
+ARFLAGS =
+CFLAGS = @CFLAGS@ -g -Wall $(DEFS) $(INC)
+LDFLAGS = @LDFLAGS@ $(LIBS)
+
+MAKEFLAGS += -r
+
+ifdef VERBOSE
+	ARFLAGS = cruv
+
+	wrap_AR = $(AR) $(ARFLAGS) $(1) $(2)
+	wrap_CC = $(CC) $(CFLAGS) $(1) -c $(2) -o $(3)
+	wrap_LD = $(CC) -o $(1) $(2) $(3) $(LDFLAGS)
+	wrap_RANLIB = $(RANLIB) $(1)
+else
+	ARFLAGS = cru
+	MAKEFLAGS += --silent
+
+	wrap_AR = @echo "AR      $(1)"; $(AR) $(ARFLAGS) $(1) $(2)
+	wrap_CC = @echo "CC      $(2)"; $(CC) $(CFLAGS) $(1) -c $(2) -o $(3)
+	wrap_LD = @echo "LD      $(1)"; $(CC) -o $(1) $(2) $(3) $(LDFLAGS)
+	wrap_RANLIB = @echo "RANLIB  $(1)"; $(RANLIB) $(1)
+endif
+
+# vim: ts=8 sw=8 noet fdm=marker :
